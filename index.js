@@ -4,7 +4,7 @@ var session = require('express-session');
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var multer = require('multer');
-var bcrypt = require('bcrypt');
+//var bcrypt = require('bcrypt');
 var app = express();
 
 
@@ -17,6 +17,11 @@ app.use(session({
     saveUninitialized: true
 }));
 app.set('view engine', 'ejs');
+app.use(function(req, res, next) {
+   res.locals.isAuthenticated = req.session.authenticated;
+   next();
+});
+
 
 // const connection = mysql.createConnection({
 //     host: process.env.HOST,
@@ -26,13 +31,13 @@ app.set('view engine', 'ejs');
 // });
 // connection.connect();
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'admin',
-    password: 'admin',
-    database: 'usersdb'
-});
-connection.connect();
+// const connection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'admin',
+//     password: 'admin',
+//     database: 'usersdb'
+// });
+// connection.connect();
 
 /* Middleware */
 function isAuthenticated(req, res, next){
@@ -66,15 +71,15 @@ app.get('/', function(req, res) {
     
     let stmt = 'SELECT * FROM users';
     
-    connection.query(stmt, function(error, results) {
-        console.log("enter!");
-        if (error) throw error;
-        //if (results.length) {
-            // console.log(results)
-        res.render("home", { results: results });
-        //}
-    });
-    
+    // connection.query(stmt, function(error, results) {
+    //     console.log("enter!");
+    //     if (error) throw error;
+    //     //if (results.length) {
+    //         // console.log(results)
+    //     res.render("home", { results: results });
+    //     //}
+    // });
+    res.render("home");
 });
 
 /* Login Routes */
