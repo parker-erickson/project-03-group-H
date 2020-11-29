@@ -4,7 +4,7 @@ var session = require('express-session');
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var multer = require('multer');
-//var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt');
 var app = express();
 
 
