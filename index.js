@@ -31,13 +31,13 @@ app.use(function(req, res, next) {
 // });
 // connection.connect();
 
-// const connection = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'admin',
-//     password: 'admin',
-//     database: 'usersdb'
-// });
-// connection.connect();
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '1Qaz2Wsx',
+    database: 'project3'
+});
+connection.connect();
 
 /* Middleware */
 function isAuthenticated(req, res, next){
