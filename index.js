@@ -7,6 +7,7 @@ var multer = require('multer');
 var bcrypt = require('bcrypt');
 var app = express();
 
+const router = express.Router();
 
 app.use(express.static("css"));
 app.use(express.static('public'));
@@ -28,9 +29,9 @@ app.set('view engine', 'ejs');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'admin',
-    password: 'admin',
-    database: 'usersdb'
+    user: 'root',
+    password: '13Beagles',
+    database: 'project3'
 });
 connection.connect();
 
@@ -115,6 +116,16 @@ app.post('/register', function(req, res){
     });
 });
 
+/*Search methods*/
+router.get('/search', async (req, res) => {
+   const results = await new promise(function (resolve, reject, body) {
+      const key = 'RNQAGUEKH5UL8IF5';
+      const part = 'snippet';
+      const q = req.query.keyword;
+
+   });
+});
+
 /* Logout Route */
 app.get('/logout', function(req, res){
    req.session.destroy();
@@ -126,6 +137,11 @@ app.get('/welcome', isAuthenticated, function(req, res){
    res.render('welcome', {user: req.session.user}); 
 });
 
+/*Prediction Route*/
+// app.get('/predictions', isAuthenticated(), (req, res) => {
+app.get('/predictions', (req, res) => {
+    res.render('predictions')
+});
 
 /* Error Route*/
 app.get('*', function(req, res){
