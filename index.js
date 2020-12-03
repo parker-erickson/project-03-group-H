@@ -28,9 +28,9 @@ app.set('view engine', 'ejs');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'admin',
-    password: 'admin',
-    database: 'usersdb'
+    user: 'root',
+    password: 'jose',
+    database: 'users'
 });
 connection.connect();
 
@@ -114,6 +114,17 @@ app.post('/register', function(req, res){
         });
     });
 });
+
+/*About Routes */
+app.get('/about', function(req,res){
+    res.render('about');
+});
+
+/*Contact Routes */
+app.get('/contact', function(req,res){
+    res.render('contact');
+});
+
 
 /* Logout Route */
 app.get('/logout', function(req, res){
