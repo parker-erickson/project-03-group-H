@@ -5,9 +5,12 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var bcrypt = require('bcrypt');
+const fetch = require('node-fetch');
 var app = express();
 
 const router = express.Router();
+const actionRouter = require('./routes/action');
+const searchRouter = require('./routes/search');
 
 app.use(express.static("css"));
 app.use(express.static('public'));
@@ -116,15 +119,9 @@ app.post('/register', function(req, res){
     });
 });
 
-/*Search methods*/
-router.get('/search', async (req, res) => {
-   const results = await new promise(function (resolve, reject, body) {
-      const key = 'RNQAGUEKH5UL8IF5';
-      const part = 'snippet';
-      const q = req.query.keyword;
-
-   });
-});
+/* Action route */
+app.use('/action', actionRouter);
+app.use('/search', searchRouter);
 
 /* Logout Route */
 app.get('/logout', function(req, res){
@@ -138,14 +135,39 @@ app.get('/welcome', isAuthenticated, function(req, res){
 });
 
 /*Prediction Route*/
-// app.get('/predictions', isAuthenticated(), (req, res) => {
-app.get('/predictions', (req, res) => {
-    res.render('predictions')
+app.get('/pred', async (req, res) => {
+
+    const key = 'RNQAGUEKH5UL8IF5';
+    const symbol = req.query.btnName;
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=${key}`;
+    let settings = {method: "Get"};
+    let stockData = []
+
+    await fetch(url, settings)
+        .then(res => res.json())
+        .then((json) => {
+            if (symbol != '') {
+                let result = json["Time Series (Daily)"]
+                console.log(result.size);
+                for (let i in result) {
+                    stockData.push(result[i])
+                }
+                res.render('pred', {
+                    result: stockData
+                });
+            } else {
+                res.redirect('/search')
+            }
+        });
+});
+
+app.get('/search', (req, res) => {
+    res.render('search');
 });
 
 /* Error Route*/
 app.get('*', function(req, res){
-   res.render('error'); 
+   res.render('search');
 });
 
 app.listen(process.env.PORT || 3000, function(){
