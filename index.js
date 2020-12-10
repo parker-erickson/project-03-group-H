@@ -5,6 +5,7 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var bcrypt = require('bcrypt');
+var nodemailer = require('nodemailer');
 var app = express();
 
 
@@ -123,6 +124,40 @@ app.get('/about', function(req,res){
 /*Contact Routes */
 app.get('/contact', function(req,res){
     res.render('contact');
+});
+
+app.post('/contact', function(req, res) {
+    
+    //instantiating the smtp server
+    const smtpTrans = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465, 
+        secure: true, 
+        auth: {
+            user: 'josealfaroproj3@gmail.com',
+            pass: 'Password_proj3'
+        }
+    });
+    
+    //specify what email will look like
+    var htmlBody = `<h2>Mail From Contact Form</h2><p>from: ${req.body.name} <a href="mailto:${req.body.email}">${req.body.email}</a></p><p>${req.body.message}</p>`;
+    var mailOpts = {
+        from: '<email@email.com>',
+        to: 'josealfaroproj3@gmail.com',
+        subject: 'New Message',
+        text: `FROM: ${req.body.name} EMAIL: ${req.body.email} MESSAGE: ${req.body.message}`,
+        html: htmlBody
+    };
+    
+    //attempt to send mail
+    smtpTrans.sendMail(mailOpts, function(error, response) {
+        if(error){
+            res.render('contact-failure');
+        }
+        else{
+            res.render('contact-success');
+        }
+    });
 });
 
 
