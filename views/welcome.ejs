@@ -1,15 +1,23 @@
 <%- include ('templates/header'); -%>
 
-<%- include ('templates/authnav'); -%>
+<%- include ('templates/nav'); -%>
 
 
 <div class='container'>
 	<div class='jumbotron'>
-		<a class='btn btn-danger' href='/logout'>Logout</a>
+		<h4>Welcome <%=user%> to the page !!!</h4>
 	</div>
 	
-	<h4>Welcome <%=user%> to the page !!!</h4>
-	
 </div>
+<style>
+	body {
+		background-image: url('img/stock-background.jpg');
+		background-attachment: fixed;
+		background-size: cover;
+	}
+	.jumbotron {
+		opacity: 80%;
+	}
+</style>
 
 <%- include ('templates/footer'); -%>
