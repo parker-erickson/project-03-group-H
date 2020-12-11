@@ -29,19 +29,26 @@ app.use(function(req, res, next) {
 
 
 // const connection = mysql.createConnection({
-//     host: process.env.HOST,
-//     user: process.env.USERNAME,
-//     password: process.env.PASSWORD,
-//     database: process.env.DATABASE
+//     host: 'localhost',
+//     user: 'root',
+//     password: '13Beagles',
+//     database: 'project3'
 // });
-// connection.connect();
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '13Beagles',
-    database: 'project3'
-});
+let connection
+if (process.env.JAWSDB_URL) {
+    console.log("jawsdb")
+    connection = mysql.createConnection(process.env.JAWSDB_URL);
+} else {
+    // create connection
+    console.log("local db")
+    connection =  mysql.createConnection({
+        host: process.env.DATABASE_HOST,
+        user: process.env.DATABASE_USER,
+        password: process.env.DATABASE_PASSWORD,
+        database: process.env.DATABASE
+    });
+}
 connection.connect();
 
 /* Middleware */
