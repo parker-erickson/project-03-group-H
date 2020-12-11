@@ -1,0 +1,45 @@
+<%- include ('templates/header'); -%>
+
+
+<%- include ('templates/nav'); -%>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<div class='jumbotron'>
+    <!--<a class='btn btn-primary' href='/login'>Login</a>-->
+    <!--<a class='btn btn-info' href='/register'>Register</a>-->
+
+    <div><h1>Stock Symbol Search</h1></div>
+
+</div>
+<div>
+    <%- include ('templates/searchbar'); -%>
+    <% if (typeof result != "undefined") {%>
+
+    <div class="d-flex justify-content-center">
+        <table>
+            <tr>
+                <th>Symbol</th>
+                <th>Company name</th>
+            </tr>
+
+            <%for (r of result) {%>
+            <tr>
+                <td>
+<!--                   TODO: set action to prediction-->
+                    <form method="get" action="/tfjs/predict">
+                        <button type="submit" name="btnName" value="<%=r%>"><%=r%></button>
+                    </form>
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            <% } %>
+        </table>
+    </div>
+    <% } %>
+</div>
+</div>
+<br><br><br><br><br><br><br>
+
+<%- include ('templates/footer'); -%>
