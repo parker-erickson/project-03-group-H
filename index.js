@@ -5,8 +5,13 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var bcrypt = require('bcrypt');
+const fetch = require('node-fetch');
 var app = express();
 
+const router = express.Router();
+const actionRouter = require('./routes/action');
+const searchRouter = require('./routes/search');
+const tfjsRouter = require('./routes/tfjs');
 
 app.use(express.static("css"));
 app.use(express.static('public'));
@@ -28,9 +33,9 @@ app.set('view engine', 'ejs');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'admin',
-    password: 'admin',
-    database: 'usersdb'
+    user: 'root',
+    password: '13Beagles',
+    database: 'project3'
 });
 connection.connect();
 
@@ -115,6 +120,11 @@ app.post('/register', function(req, res){
     });
 });
 
+/* Action route */
+app.use('/action', actionRouter);
+app.use('/search', searchRouter);
+app.use('/tfjs', tfjsRouter);
+
 /* Logout Route */
 app.get('/logout', function(req, res){
    req.session.destroy();
@@ -126,10 +136,41 @@ app.get('/welcome', isAuthenticated, function(req, res){
    res.render('welcome', {user: req.session.user}); 
 });
 
+/*Prediction Route*/
+app.get('/pred', async (req, res) => {
+
+    res.redirect('/prediction');
+    // const key = 'RNQAGUEKH5UL8IF5';
+    // const symbol = req.query.btnName;
+    // const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=${key}`;
+    // let settings = {method: "Get"};
+    // let stockData = []
+    //
+    // await fetch(url, settings)
+    //     .then(res => res.json())
+    //     .then((json) => {
+    //         if (symbol != '') {
+    //             let result = json["Time Series (Daily)"]
+    //             console.log(result.size);
+    //             for (let i in result) {
+    //                 stockData.push(result[i])
+    //             }
+    //             res.render('pred', {
+    //                 result: stockData
+    //             });
+    //         } else {
+    //             res.redirect('/search')
+    //         }
+    //     });
+});
+
+app.post('/search', (req, res) => {
+    res.render('search');
+});
 
 /* Error Route*/
 app.get('*', function(req, res){
-   res.render('error'); 
+   res.render('search');
 });
 
 app.listen(process.env.PORT || 3000, function(){
