@@ -1,9 +1,4 @@
-
-
 body{
-	background-image: url(https://cdn1.vectorstock.com/i/1000x1000/28/00/stock-exchange-background-vector-27122800.jpg);
-	background-attachment: fixed;
-	background-size: cover;
+	background-image: url('img/stock-background.jpg');
 	font-family: new time roman;
 }
-
