@@ -5,9 +5,16 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var bcrypt = require('bcrypt');
+
 var nodemailer = require('nodemailer');
+const fetch = require('node-fetch');
+
 var app = express();
 
+const router = express.Router();
+const actionRouter = require('./routes/action');
+const searchRouter = require('./routes/search');
+const tfjsRouter = require('./routes/tfjs');
 
 app.use(express.static("css"));
 app.use(express.static('public'));
@@ -18,21 +25,33 @@ app.use(session({
     saveUninitialized: true
 }));
 app.set('view engine', 'ejs');
+app.use(function(req, res, next) {
+   res.locals.isAuthenticated = req.session.authenticated;
+   next();
+});
+
 
 // const connection = mysql.createConnection({
-//     host: process.env.HOST,
-//     user: process.env.USERNAME,
-//     password: process.env.PASSWORD,
-//     database: process.env.DATABASE
+//     host: 'localhost',
+//     user: 'root',
+//     password: '13Beagles',
+//     database: 'project3'
 // });
-// connection.connect();
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'jose',
-    database: 'users'
-});
+let connection
+if (process.env.JAWSDB_URL) {
+    console.log("jawsdb")
+    connection = mysql.createConnection(process.env.JAWSDB_URL);
+} else {
+    // create connection
+    console.log("local db")
+    connection =  mysql.createConnection({
+        host: process.env.DATABASE_HOST,
+        user: process.env.DATABASE_USER,
+        password: process.env.DATABASE_PASSWORD,
+        database: process.env.DATABASE
+    });
+}
 connection.connect();
 
 /* Middleware */
@@ -67,15 +86,15 @@ app.get('/', function(req, res) {
     
     let stmt = 'SELECT * FROM users';
     
-    connection.query(stmt, function(error, results) {
-        console.log("enter!");
-        if (error) throw error;
-        //if (results.length) {
-            // console.log(results)
-        res.render("home", { results: results });
-        //}
-    });
-    
+    // connection.query(stmt, function(error, results) {
+    //     console.log("enter!");
+    //     if (error) throw error;
+    //     //if (results.length) {
+    //         // console.log(results)
+    //     res.render("home", { results: results });
+    //     //}
+    // });
+    res.render("home");
 });
 
 /* Login Routes */
@@ -161,6 +180,11 @@ app.post('/contact', function(req, res) {
 });
 
 
+/* Action route */
+app.use('/action', actionRouter);
+app.use('/search', searchRouter);
+app.use('/tfjs', tfjsRouter);
+
 /* Logout Route */
 app.get('/logout', function(req, res){
    req.session.destroy();
@@ -172,10 +196,41 @@ app.get('/welcome', isAuthenticated, function(req, res){
    res.render('welcome', {user: req.session.user}); 
 });
 
+/*Prediction Route*/
+app.get('/pred', async (req, res) => {
+
+    res.redirect('/prediction');
+    // const key = 'RNQAGUEKH5UL8IF5';
+    // const symbol = req.query.btnName;
+    // const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=${key}`;
+    // let settings = {method: "Get"};
+    // let stockData = []
+    //
+    // await fetch(url, settings)
+    //     .then(res => res.json())
+    //     .then((json) => {
+    //         if (symbol != '') {
+    //             let result = json["Time Series (Daily)"]
+    //             console.log(result.size);
+    //             for (let i in result) {
+    //                 stockData.push(result[i])
+    //             }
+    //             res.render('pred', {
+    //                 result: stockData
+    //             });
+    //         } else {
+    //             res.redirect('/search')
+    //         }
+    //     });
+});
+
+app.post('/search', (req, res) => {
+    res.render('search');
+});
 
 /* Error Route*/
 app.get('*', function(req, res){
-   res.render('error'); 
+   res.render('search');
 });
 
 app.listen(process.env.PORT || 3000, function(){
