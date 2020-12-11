@@ -140,7 +140,7 @@ app.post('/contact', function(req, res) {
     });
     
     //specify what email will look like
-    var htmlBody = `<h2>Mail From Contact Form</h2><p>from: ${req.body.name} <a href="mailto:${req.body.email}">${req.body.email}</a></p><p>${req.body.message}</p>`;
+    var htmlBody = `<h2>Mail From Contact Form</h2><p> <h3>Name: </h3>${req.body.name} <h3>Email: </h3> <a href="mailto:${req.body.email}">${req.body.email}</a></p><p><h3>Message: </h3>${req.body.message}</p>`;
     var mailOpts = {
         from: '<email@email.com>',
         to: 'josealfaroproj3@gmail.com',

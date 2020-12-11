@@ -4,11 +4,11 @@
 
 <div class='container text-center'>
 	<br><br>
-		<h3> User Login </h3>
+		<h3 style='color: white;'> User Login </h3>
 		<br>
 	
     <%if(typeof error != 'undefined' && error){%>
-        <h6 style='color: red;'> Incorrect login credentials! </h6>
+        <h5 style='color: red;'> Incorrect login credentials! </h5>
 	<%}%>
 	
 	<form action='/login' method='POST'>
@@ -16,7 +16,7 @@
 
        <div class='form-group row'>
           <div class='col-sm-2'></div>
-          <label for='username' class='col-sm-2 col-form-label'>User-Name</label>
+          <label for='username' class='col-sm-2 col-form-label' style='color: white;'>User-Name</label>
        <div class='col-sm-4'>
           <input type='text' class='form-control' id='username' name='username' placeholder='User-Name' required>
          </div>
@@ -24,7 +24,7 @@
 		
 			<div class='form-group row'>
 			    <div class='col-sm-2'></div>
-				<label for='password' class='col-sm-2 col-form-label'>Password</label>
+				<label for='password' class='col-sm-2 col-form-label' style='color: white;'>Password</label>
 				<div class='col-sm-4'>
 					<input type='password' class='form-control' id='password' name='password' placeholder='****' required>
 				</div>
