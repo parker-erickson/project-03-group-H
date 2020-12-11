@@ -11,6 +11,9 @@
   <li > </li>
     
     <a class="navbar-brand" href="/">Home</a>
+    <% if (isAuthenticated){ %>
+    <a class="navbar-brand" href="/welcome">Account Page</a>
+    <% } %>
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item active">
         <% if (!isAuthenticated){ %>
@@ -24,12 +27,18 @@
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-4" type="search"  placeholder="Search" aria-label="Search">
       <div class="btn-group">
-       
   <button type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Search
   </button>
+  <a class='btn btn-danger' href='/logout'>Logout</a>
   <% } %>
 </div>
     </form>
   </div>
 </nav>
+<style>
+  a {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+</style>

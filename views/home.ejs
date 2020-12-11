@@ -10,9 +10,11 @@
 		<!--<a class='btn btn-info' href='/register'>Register</a>-->
 		
 		<div><h1>CST438 Stock Predictions</h1></div>
+		<% if (!isAuthenticated){ %>
 		<p>Please Log-in or create an account to continue.</p>
-
-		
+		<% } else { %>
+		<p>Stocks and graphics oh my!</p>
+		<% } %>
 	</div>
 <!--</div>-->
 <br><br><br><br><br><br><br>
