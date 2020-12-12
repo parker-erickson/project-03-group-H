@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Stocks",
   "main": "index.js",
-  "engines:" {
+  "engines": {
     "node": "latest"
   },
   "scripts": {
