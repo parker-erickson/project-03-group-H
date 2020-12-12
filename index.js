@@ -5,10 +5,14 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var bcrypt = require('bcrypt');
+
+var nodemailer = require('nodemailer');
 const fetch = require('node-fetch');
+
 const dotenv = require('dotenv');
 
 dotenv.config({ path: './.env' })
+
 
 var app = express();
 
@@ -135,6 +139,51 @@ app.post('/register', function(req, res){
         });
     });
 });
+
+/*About Routes */
+app.get('/about', function(req,res){
+    res.render('about');
+});
+
+/*Contact Routes */
+app.get('/contact', function(req,res){
+    res.render('contact');
+});
+
+app.post('/contact', function(req, res) {
+    
+    //instantiating the smtp server
+    const smtpTrans = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465, 
+        secure: true, 
+        auth: {
+            user: 'josealfaroproj3@gmail.com',
+            pass: 'Password_proj3'
+        }
+    });
+    
+    //specify what email will look like
+    var htmlBody = `<h2>Mail From Contact Form</h2><p> <h3>Name: </h3>${req.body.name} <h3>Email: </h3> <a href="mailto:${req.body.email}">${req.body.email}</a></p><p><h3>Message: </h3>${req.body.message}</p>`;
+    var mailOpts = {
+        from: '<email@email.com>',
+        to: 'josealfaroproj3@gmail.com',
+        subject: 'New Message',
+        text: `FROM: ${req.body.name} EMAIL: ${req.body.email} MESSAGE: ${req.body.message}`,
+        html: htmlBody
+    };
+    
+    //attempt to send mail
+    smtpTrans.sendMail(mailOpts, function(error, response) {
+        if(error){
+            res.render('contact-failure');
+        }
+        else{
+            res.render('contact-success');
+        }
+    });
+});
+
 
 /* Action route */
 app.use('/action', actionRouter);
