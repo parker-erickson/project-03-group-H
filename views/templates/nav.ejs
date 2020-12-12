@@ -5,11 +5,10 @@
   <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
     
  <li >
-    <H1 align="left"><img src="/img/logo.jpg" alt="logo" style="width:50px;height:50px;"></H1>
+    <H1 align="left"><img src="/img/chart.jpg" alt="logo" style="width:50px;height:50px;"></H1>
   </li>
-  
-  <li > </li>
-    
+
+
     <a class="navbar-brand" href="/">Home</a>
     <% if (isAuthenticated){ %>
     <a class="navbar-brand" href="/welcome">Account Page</a>
@@ -27,7 +26,7 @@
     <form action="./action/search" class="form-inline my-2 my-lg-0">
       <input id="search-bar" class="form-control mr-sm-4" type="search" name="keyword" placeholder="Search" aria-label="Search">
       <div class="btn-group">
-  <button type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button type="submit" value="Search" class="btn btn-outline-info">
     Search
   </button>
   <a class='btn btn-danger' href='/logout'>Logout</a>

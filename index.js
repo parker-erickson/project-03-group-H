@@ -6,6 +6,10 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var bcrypt = require('bcrypt');
 const fetch = require('node-fetch');
+const dotenv = require('dotenv');
+
+dotenv.config({ path: './.env' })
+
 var app = express();
 
 const router = express.Router();
@@ -150,30 +154,13 @@ app.get('/welcome', isAuthenticated, function(req, res){
 
 /*Prediction Route*/
 app.get('/pred', async (req, res) => {
-
     res.redirect('/prediction');
-    // const key = 'RNQAGUEKH5UL8IF5';
-    // const symbol = req.query.btnName;
-    // const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=${key}`;
-    // let settings = {method: "Get"};
-    // let stockData = []
-    //
-    // await fetch(url, settings)
-    //     .then(res => res.json())
-    //     .then((json) => {
-    //         if (symbol != '') {
-    //             let result = json["Time Series (Daily)"]
-    //             console.log(result.size);
-    //             for (let i in result) {
-    //                 stockData.push(result[i])
-    //             }
-    //             res.render('pred', {
-    //                 result: stockData
-    //             });
-    //         } else {
-    //             res.redirect('/search')
-    //         }
-    //     });
+});
+
+app.get('/resultRoute*', (req, res) => {
+  res.render('pred', {
+      forecast: req.query.forecast,
+  })
 });
 
 app.post('/search', (req, res) => {
@@ -182,7 +169,7 @@ app.post('/search', (req, res) => {
 
 /* Error Route*/
 app.get('*', function(req, res){
-   res.render('search');
+   res.render('error');
 });
 
 app.listen(process.env.PORT || 3000, function(){

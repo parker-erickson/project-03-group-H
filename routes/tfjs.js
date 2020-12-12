@@ -2,67 +2,79 @@ const tf = require("@tensorflow/tfjs-node");
 const fetch = require('node-fetch')
 const express = require('express');
 const moment = require('moment');
-const Chart = require('chart.js')
+const {CanvasRenderService} = require('chartjs-node-canvas');
+const ChartJS = require('chart.js');
+const { image } = require("canvas");
+const fs = require('fs');
 
 const router = express.Router();
 
+let forcast = '';
+
+// Plot the data using Chart.js, Canvas, and a node helper
 const plotData = function (data1, data2, label = null) {
 
-    var N = label ? label : [...Array(Math.max(data1.length, data2.length)).keys()];
+    const width = 800; //px
+    const height = 400; //px
+    const canvasRenderService = new CanvasRenderService(width, height)
+    const N = label ? label : [...Array(Math.max(data1.length, data2.length)).keys()];
 
-    var config = {
-        type: 'line',
-        data: {
-            labels: N,
-            datasets: [{
-                label: 'Predicted',
-                fill: false,
-                backgroundColor: 'red',
-                borderColor: 'red',
-                data: data2,
-            }, {
-                label: 'Actual',
-                backgroundColor: 'blue',
-                borderColor: 'blue',
-                data: data1,
-                fill: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: 'Stock Price Prediction'
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-            },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            scales: {
-                xAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Date'
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Stock Value'
-                    }
+    (async () => {
+        const config = {
+            type: 'line',
+            data: {
+                labels: N,
+                datasets: [{
+                    label: 'Predicted',
+                    fill: false,
+                    backgroundColor: 'red',
+                    borderColor: 'red',
+                    data: data2,
+                }, {
+                    label: 'Actual',
+                    backgroundColor: 'blue',
+                    borderColor: 'blue',
+                    data: data1,
+                    fill: false,
                 }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Stock Price Prediction'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Stock Value'
+                        }
+                    }]
+                }
             }
-        }
-    };
+        };
 
-    var ctx = document.getElementById('canvas').getContext('2d');
-    window.myLine = new Chart(ctx, config);
+        const image = canvasRenderService.renderToBufferSync(config);
+        fs.writeFileSync(`public/img/chart.jpg`, image);
+    })();
+
 }
 
 const generateNextDayPrediction = function (data, timePortion) {
@@ -130,28 +142,6 @@ Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
-}
-
-
-/*
-    Add text in the html view
-*/
-const print = function (text) {
-    let el = document.getElementsByClassName('cnn')[0];
-    let elem = document.createElement('h5');
-    elem.innerHTML = text;
-    el.append(elem);
-    el.append(document.createElement('br'))
-    console.log(text)
-};
-
-
-/*
-    Clear the html view
-*/
-const clearPrint = function () {
-    let el = document.getElementsByClassName('cnn')[0];
-    el.innerHTML = "";
 }
 
 const processData = function (data, timePortion) {
@@ -276,7 +266,7 @@ const cnn = function(model, data, epochs) {
             model.fit(data.tensorTrainX, data.tensorTrainY, {
                 epochs: epochs
             }).then((result) => {
-                print("Loss after last Epoch (" + result.epoch.length + ") is: " + result.history.loss[result.epoch.length-1]);
+                // print("Loss after last Epoch (" + result.epoch.length + ") is: " + result.history.loss[result.epoch.length-1]);
                 resolve(model);
             })
         }
@@ -286,18 +276,15 @@ const cnn = function(model, data, epochs) {
     });
 }
 
-router.get('*/predict', async function(req, res) {
+router.get('*/predict', async function(req, res, next) {
     const key = 'RNQAGUEKH5UL8IF5';
     const symbol = req.query.btnName;
     const url = `https://sandbox.iexapis.com/stable/stock/${symbol}/chart/1y?token=Tpk_f94a42d2717445ac9fa1d8f8c566fc31`
-    // const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=${key}`;
     let epochs = 100;
     let timePortion = 7;
+    let forecast = '';
 
-    console.log("trying to predict");
-    console.log("URL: " + url)
-    //TODO: initialize the graph
-    // plotData([], []);
+    plotData([], []);
 
     await fetch(url)
         .then((response)=>{
@@ -306,11 +293,6 @@ router.get('*/predict', async function(req, res) {
         .then(function(json){
 
             if (symbol != '') {
-                // let data = json["Time Series (Daily)"]
-                // console.log(data.size);
-                // for (let i in data) {
-                //     stockData.push(data[i])
-                // }
 
                 //get the datetime labels use in graph
                 let labels = json.map((val) => {
@@ -323,7 +305,7 @@ router.get('*/predict', async function(req, res) {
                     //create the set for stock price prediction for the next day
                     let nextDayPrediction = generateNextDayPrediction(result.originalData, result.timePortion);
                     //get the last date form the dataset
-                    let predictDate = (new Date(labels[labels.length-1] + 'T00:00:00.000')).addDays(1);
+                    let predictDate = (new Date(labels[labels.length - 1] + 'T00:00:00.000')).addDays(1);
 
                     //build the convolutional neural network
                     buildCnn(result).then((built) => {
@@ -345,7 +327,7 @@ router.get('*/predict', async function(req, res) {
                             //Scale the next day features
                             let nextDayPredictionScaled = minMaxScaler(nextDayPrediction, min, max);
                             //Transform to tensor data
-                            let tensorNextDayPrediction = tf.tensor1d(nextDayPredictionScaled.json).reshape([1, built.data.timePortion, 1]);
+                            let tensorNextDayPrediction = tf.tensor1d(nextDayPredictionScaled.data).reshape([1, built.data.timePortion, 1]);
                             //Predict the next day stock price
                             let predictedValue = model.predict(tensorNextDayPrediction);
 
@@ -370,22 +352,20 @@ router.get('*/predict', async function(req, res) {
 
                                     //plot the original (trainY) and predicted values for the same feature set (trainX)
                                     plotData(trainYInverse.data, predictedXInverse.data, labels);
-                                });
 
-                                //print the predicted stock price value for the next day
-                                print("Predicted Stock Price of " + symbol + " for date " + moment(predictDate).format("DD-MM-YYYY") + " is: " + inversePredictedValue.data[0].toFixed(3) + "$");
+                                    //print the predicted stock price value for the next day
+                                    forecast = ("Predicted Stock Price of " + symbol + " for date " + moment(predictDate).format("DD-MM-YYYY") + " is: " + inversePredictedValue.data[0].toFixed(3) + "$");
+                                    res.redirect(`/resultRoute?forecast=${forecast}`);
+
+                                });
 
                             })
                         })
 
                     });
-
-
                 })
 
-                res.render('pred', {
-                    result: labels
-                });
+
             } else {
                 res.redirect('/search')
             }
