@@ -10,10 +10,8 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: './.env' })
 
-
 var app = express();
 
-const router = express.Router();
 const actionRouter = require('./routes/action');
 const searchRouter = require('./routes/search');
 const tfjsRouter = require('./routes/tfjs');
