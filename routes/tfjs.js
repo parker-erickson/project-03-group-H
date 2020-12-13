@@ -3,13 +3,9 @@ const fetch = require('node-fetch')
 const express = require('express');
 const moment = require('moment');
 const {CanvasRenderService} = require('chartjs-node-canvas');
-// const ChartJS = require('chart.js');
-// const { image } = require("canvas");
 const fs = require('fs');
 
 const router = express.Router();
-
-let forcast = '';
 
 // Plot the data using Chart.js, Canvas, and a node helper
 const plotData = function (data1, data2, label = null) {
