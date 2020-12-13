@@ -3,8 +3,8 @@ const fetch = require('node-fetch')
 const express = require('express');
 const moment = require('moment');
 const {CanvasRenderService} = require('chartjs-node-canvas');
-const ChartJS = require('chart.js');
-const { image } = require("canvas");
+// const ChartJS = require('chart.js');
+// const { image } = require("canvas");
 const fs = require('fs');
 
 const router = express.Router();
