@@ -1,13 +1,10 @@
 var express = require('express');
-var request = require("request");
 var session = require('express-session');
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
-var multer = require('multer');
 var bcrypt = require('bcrypt');
 
 var nodemailer = require('nodemailer');
-const fetch = require('node-fetch');
 
 const dotenv = require('dotenv');
 
